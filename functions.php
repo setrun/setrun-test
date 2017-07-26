@@ -5,6 +5,8 @@
  * @link   https://github.com/dizirator
  */
 
+use yii\base\InvalidParamException;
+
 /**
  * Find application by domain name
  */
@@ -27,6 +29,22 @@ function findApplicationByDomain() : void
     }
     define('APP_NAME', $app);
     define('APP_PATH', $dir . $app);
+}
+
+/**
+ * @param $key
+ * @param null $value
+ * @param null $default
+ * @return mixed
+ */
+function alias($key, $value = null, $default = null) : mixed
+{
+    try {
+        if ($value !== null) return Yii::setAlias($key, $value);
+        return Yii::getAlias($key);
+    } catch (InvalidParamException $e) {
+        return $default;
+    }
 }
 
 /**
