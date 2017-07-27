@@ -8,20 +8,21 @@
  * @license http://www.yiiframework.com/license/
  */
 
+defined('YII_DEBUG') or define('YII_DEBUG', true);
+defined('YII_ENV')   or define('YII_ENV',   'dev');
+
 require(__DIR__ . '/vendor/autoload.php');
 require(__DIR__ . '/functions.php');
 
-require(__DIR__ . '/environment.php');
 require(__DIR__ . '/vendor/yiisoft/yii2/Yii.php');
-require(__DIR__ . '/config/bootstrap.php');
-
-Yii::setAlias('@commands',__DIR__. '/commands');
+require(__DIR__ . '/common/config/bootstrap.php');
 
 $config = yii\helpers\ArrayHelper::merge(
-    require(__DIR__ . '/config/main.php'),
-    require(__DIR__ . '/config/main-local.php'),
-    require(__DIR__ . '/config/console.php'),
-    require(__DIR__ . '/config/console-local.php')
+    require(__DIR__ . '/common/config/main.php'),
+    require(__DIR__ . '/common/config/main-local.php'),
+    require(__DIR__ . '/common/config/console.php'),
+    require(__DIR__ . '/common/config/console-local.php'),
+    require(__DIR__ . '/common/modules/sys/config/console/sys.php')
 );
 
 $application = new yii\console\Application($config);

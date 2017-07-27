@@ -14,7 +14,7 @@ function findApplicationByDomain() : void
 {
     $default = $app = 'master';
 
-    $file    = __DIR__ . '/config/domains.php';
+    $file    = __DIR__ . '/coomon/config/domains.php';
     $domains = file_exists($file) ? (array) require $file : [];
     $dir     = __DIR__ . '/applications/';
 

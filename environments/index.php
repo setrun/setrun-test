@@ -34,7 +34,10 @@ return [
         'path' => 'dev',
         'setWritable' => [
             'runtime',
-            'web/assets'
+            'web/assets',
+            'applications/master/runtime',
+            'applications/master/web/assets'
+
         ],
         'setExecutable' => [
             'yii',
@@ -49,6 +52,8 @@ return [
         'setWritable' => [
             'runtime',
             'web/assets',
+            'applications/master/runtime',
+            'applications/master/web/assets'
         ],
         'setExecutable' => [
             'yii',
