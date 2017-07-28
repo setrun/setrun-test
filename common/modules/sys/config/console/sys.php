@@ -9,7 +9,7 @@ return [
     'bootstrap' => ['sys\components\Bootstrap'],
     'components' => [
         'authManager' => [
-            'class' => 'yii\rbac\DbManager'
+            'class' => 'sys\components\rbac\HybridManager',
         ],
         'i18n' => [
             'translations' => [

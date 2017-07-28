@@ -12,7 +12,11 @@ return [
             'dsn' => 'mysql:host=localhost;dbname=setrun',
             'username' => 'root',
             'password' => '',
-            'charset' => 'utf8',
+            'charset'  => 'utf8mb4',
+            'tablePrefix' => 'setrun_',
+            'schemaCache'         => 'cache',
+            'enableSchemaCache'   => true,
+            'schemaCacheDuration' => 3600
         ],
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',

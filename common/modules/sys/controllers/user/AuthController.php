@@ -5,18 +5,39 @@
  * @link   https://github.com/dizirator
  */
 
-namespace sys\controllers;
+namespace sys\controllers\user;
 
 use Yii;
 use yii\filters\VerbFilter;
+use sys\forms\user\LoginForm;
 use yii\filters\AccessControl;
+use sys\components\user\Identity;
+use sys\services\user\AuthService;
 use sys\components\controllers\FrontController;
 
 /**
  * Class UserController.
  */
-class UserController extends FrontController
+class AuthController extends FrontController
 {
+    /**
+     * @var AuthService
+     */
+    private $service;
+
+    /**
+     * AuthController constructor.
+     * @param string $id
+     * @param \yii\base\Module $module
+     * @param AuthService $service
+     * @param array $config
+     */
+    public function __construct($id, $module, AuthService $service, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->service = $service;
+    }
+
     /**
      * @inheritdoc
      */
@@ -41,7 +62,7 @@ class UserController extends FrontController
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['POST']
+                   'logout' => ['POST']
                 ]
             ]
         ];
@@ -49,24 +70,30 @@ class UserController extends FrontController
 
     /**
      * Logs in a user.
-     * @return mixed
      */
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        } else {
-            return $this->renderPartial('login', ['model' => $model]);
+        $form = new LoginForm();
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $user = $this->service->auth($form);
+                Yii::$app->user->login(new Identity($user),$form->rememberMe ? AuthService::REMEMBER : 0);
+                return $this->goBack();
+            } catch (\DomainException $e) {
+                Yii::$app->errorHandler->logException($e);
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
         }
+        return $this->renderPartial('login', [
+            'model' => $form,
+        ]);
     }
 
     /**
      * Logs out the current user.
-     * @return mixed
      */
     public function actionLogout()
     {

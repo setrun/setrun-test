@@ -5,13 +5,10 @@
  * @link   https://github.com/dizirator
  */
 
-namespace sys\assets;
+namespace sys\assets\auth;
 
-use yii\web\AssetBundle;
+use sys\components\web\AssetBundle;
 
-/**
- * Login asset bundle.
- */
 class LoginAsset extends AssetBundle
 {
     /**
@@ -23,21 +20,16 @@ class LoginAsset extends AssetBundle
      * @inheritdoc
      */
     public $css = [
-        '//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css',
-        'css/login.css'
-    ];
-
-    /**
-     * @inheritdoc
-     */
-    public $js = [
-        'js/login.js',
+        '//fonts.googleapis.com/css?family=Open+Sans:400,400i,300,700',
+        '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
+        'css/user/login.css'
     ];
 
     /**
      * @inheritdoc
      */
     public $depends = [
-        'yii\web\JqueryAsset'
+        'yii\web\YiiAsset',
+        'yii\bootstrap\BootstrapPluginAsset'
     ];
 }

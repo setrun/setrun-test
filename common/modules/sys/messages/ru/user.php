@@ -19,16 +19,17 @@ return [
     'Active' => 'Активный',
     'Wait' =>  'Ожидает активации',
     'Password' => 'Пароль',
-    'Login' => 'Войти',
+    'Sign In' => 'Войти',
     'Remember me' => 'Запомнить меня',
     'Wrong Username or Password' => 'Не верное имя пользователя или пароль',
-    'Profile blocked' => 'Аккаунт пользователя заблокирован',
-    'Profile not confirmed' => 'Аккаунт пользователя не подтвержден',
+    'Account temporarily blocked' => 'Аккаунт пользователя временно заблокирован',
+    'Account not confirmed' => 'Аккаунт пользователя не подтвержден',
     'Authorization form' => 'Форма авторизации',
     'User is already active' => 'Пользователь уже активирован',
     'Password resetting is already requested' => 'Сброс пароля уже запрошен',
     'Password resetting is not requested' => 'Сброс пароля не запрашивался',
     'Removing error' => 'Ошибка при удалении',
     'User not found' => 'Пользователь не найден',
-    'Saving error' => 'Ошибка при сохранении'
+    'Saving error' => 'Ошибка при сохранении',
+    'Form is blocked for {min} minutes' => 'Форма заблокирована на {min} минут'
 ];

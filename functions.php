@@ -50,9 +50,9 @@ function alias($key, $value = null, $default = null) : mixed
 /**
  * Debug
  * @param  array ...$params List of parameters for debug
- * @return string
+ * @return void
  */
-function debug(...$params) : string
+function debug(...$params) : void
 {
     $e     = true;  // Exit true
     $v     = false; // Var dump false

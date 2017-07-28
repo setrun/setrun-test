@@ -34,7 +34,7 @@ class User extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public static function tableName() : string
+    public static function tableName()
     {
         return '{{%user}}';
     }
@@ -42,7 +42,7 @@ class User extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public function behaviors() : array
+    public function behaviors()
     {
         return [
             TimestampBehavior::className()
@@ -52,7 +52,7 @@ class User extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public function transactions() : array
+    public function transactions()
     {
         return [
             self::SCENARIO_DEFAULT => self::OP_ALL,
@@ -62,7 +62,7 @@ class User extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels() : array
+    public function attributeLabels()
     {
         return [
             'id'                   => 'ID',
@@ -310,7 +310,7 @@ class User extends ActiveRecord
      * @param string $password
      * @return void
      */
-    private function setPassword(string $password) : void
+    public function setPassword(string $password) : void
     {
         $this->password_hash = Yii::$app->security->generatePasswordHash($password);
     }
@@ -319,7 +319,7 @@ class User extends ActiveRecord
      * Generates "remember me" authentication key.
      * @return void
      */
-    private function generateAuthKey() : void
+    public function generateAuthKey() : void
     {
         $this->auth_key = Yii::$app->security->generateRandomString();
     }

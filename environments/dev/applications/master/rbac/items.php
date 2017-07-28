@@ -5,9 +5,6 @@
  * @link   https://github.com/dizirator
  */
 
-namespace sys\services;
+return [
 
-class UserService
-{
-
-}
+];

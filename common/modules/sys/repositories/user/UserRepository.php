@@ -5,11 +5,12 @@
  * @link   https://github.com/dizirator
  */
 
-namespace sys\repositories;
+namespace sys\repositories\user;
 
 use sys\entities\User;
 use sys\interfaces\i18nInterface;
 use sys\exceptions\NotFoundException;
+
 /**
  * Class UserRepository.
  */
@@ -110,6 +111,16 @@ class UserRepository
     }
 
     /**
+     * Get for a user by name or email.
+     * @param string $value
+     * @return User
+     */
+    public function getByUsernameOrEmail(string $value) : User
+    {
+        return $this->getBy(['or', ['username' => $value], ['email' => $value]]);
+    }
+
+    /**
      * Check exists password reset token.
      * @param string $token
      * @return bool
@@ -122,23 +133,27 @@ class UserRepository
     /**
      * Save user.
      * @param User $user
+     * @return bool
      */
-    public function save(User $user) : void
+    public function save(User $user) : bool
     {
         if (!$user->save()) {
             throw new \RuntimeException($this->i18n->t('sys/user', 'Saving error'));
         }
+        return true;
     }
 
     /**
      * Remove user.
      * @param User $user
+     * @return bool
      */
-    public function remove(User $user) : void
+    public function remove(User $user) : bool
     {
         if (!$user->delete()) {
             throw new \RuntimeException($this->i18n->t('sys/user', 'Removing error'));
         }
+        return true;
     }
 
     /**

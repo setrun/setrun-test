@@ -5,14 +5,13 @@
  * @link   https://github.com/dizirator
  */
 
-
 namespace sys\components\user;
 
 use Yii;
 use sys\entities\User;
 use yii\web\IdentityInterface;
 use yii\base\NotSupportedException;
-use sys\repositories\UserRepository;
+use sys\repositories\user\UserRepository;
 
 class Identity implements IdentityInterface
 {
@@ -32,7 +31,7 @@ class Identity implements IdentityInterface
 
     /**
      * Finds an identity by the given ID.
-     * @param  string|int $id the ID to be looked for
+     * @param  string|int $id
      * @return null|Identity
      */
     public static function findIdentity($id) : ?Identity
@@ -44,7 +43,7 @@ class Identity implements IdentityInterface
 
     /**
      * Finds an identity by the given token.
-     * @param  string $token the token to be looked for
+     * @param  string $token
      * @param  null   $type
      * @throws NotSupportedException
      */
@@ -63,8 +62,8 @@ class Identity implements IdentityInterface
     }
 
     /**
-     * Get a user auth key.
-     * @return string current user auth key
+     * Get a user user key.
+     * @return string current user user key
      */
     public function getAuthKey() : string
     {
@@ -72,9 +71,9 @@ class Identity implements IdentityInterface
     }
 
     /**
-     * Check a user auth key.
+     * Check a user user key.
      * @param string $authKey
-     * @return bool if auth key is valid for current user
+     * @return bool if user key is valid for current user
      */
     public function validateAuthKey($authKey) : bool
     {

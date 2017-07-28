@@ -9,26 +9,26 @@ return [
     'bootstrap' => ['sys\components\Bootstrap'],
     'components' => [
         'request' => [
-            'csrfParam' => '_csrf-setrun',
+            'csrfParam' => '_csrf',
         ],
         'session' => [
             // this is the name of the session cookie used for login on the frontend
-            'name' => '_session-setrun',
+            'name' => '_session',
         ],
         'authManager' => [
-            'class' => 'yii\rbac\DbManager'
+            'class' => 'sys\components\rbac\HybridManager'
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName'  => false,
             'rules' => [
-                "<_a:(login|logout)>" => "sys/user/<_a>",
+                "<_a:(login|logout)>" => "sys/user/auth/<_a>",
             ],
         ],
         'user' => [
             'identityClass' => 'sys\components\user\Identity',
             'enableAutoLogin' => true,
-            'loginUrl' => ['sys/user/login'],
+            'loginUrl' => ['sys/user/auth/login'],
         ],
         'i18n' => [
             'translations' => [

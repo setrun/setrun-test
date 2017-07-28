@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @author Denis Utkin <dizirator@gmail.com>
+ * @link   https://github.com/dizirator
+ */
+
 use yii\db\Migration;
 
 /**
@@ -7,6 +12,11 @@ use yii\db\Migration;
  */
 class m170726_140445_create_user_table extends Migration
 {
+    /**
+     * @var string Name of create a table
+     */
+    private $table = '{{%user}}';
+
     public function up()
     {
         $tableOptions = null;
@@ -14,7 +24,7 @@ class m170726_140445_create_user_table extends Migration
             $tableOptions = 'CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ENGINE=InnoDB';
         }
 
-        $this->createTable('{{%user}}', [
+        $this->createTable($this->table, [
             'id'                   => $this->primaryKey(),
             'username'             => $this->string(),
             'auth_key'             => $this->string(32)->notNull(),
@@ -27,13 +37,13 @@ class m170726_140445_create_user_table extends Migration
             'updated_at'           => $this->integer()->unsigned()->notNull(),
         ], $tableOptions);
 
-        $this->createIndex('idx-user-username', '{{%user}}', 'username');
-        $this->createIndex('idx-user-email',    '{{%user}}', 'email');
-        $this->createIndex('idx-user-status',   '{{%user}}', 'status');
+        $this->createIndex('{{%idx-user-username}}', $this->table, 'username');
+        $this->createIndex('{{%idx-user-email}}',    $this->table, 'email');
+        $this->createIndex('{{%idx-user-status}}',   $this->table, 'status');
     }
 
     public function down()
     {
-        $this->dropTable('{{%user}}');
+        $this->dropTable($this->table);
     }
 }
