@@ -7,52 +7,134 @@
 
 namespace sys\components\rbac;
 
-use yii\db\Query;
-use yii\di\Instance;
-use yii\db\Connection;
+use Yii;
+use yii\db\ActiveRecord;
+use yii\rbac\Assignment;
 use yii\rbac\PhpManager;
+use yii\base\InvalidParamException;
+use sys\exceptions\NotFoundException;
+use sys\interfaces\HybridManagerInterface;
 
 /**
  * Class HybridManager.
  */
 class HybridManager extends PhpManager
 {
-    /**
-     * @var string Name of table
-     */
-    public $table = '{{%auth_assignment}}';
 
     /**
-     * @var Connection
+     * @var HybridManagerInterface
      */
-     public $db = 'db';
+    public $model = 'sys\entities\User';
 
     /**
-     * Initializes the application component.
-     * This method overrides the parent implementation by establishing the database connection.
+     * @inheritdoc
      */
-    public function init()
+    public function getAssignments($id)
     {
-        $this->db = Instance::ensure($this->db, Connection::className());
-        parent::init();
+        $assignments = [];
+        if ($id && $user = $this->getUser($id)) {
+            foreach ($user->getAuthRoleNames() as $roleName) {
+                $assignment = new Assignment();
+                $assignment->userId = $id;
+                $assignment->roleName = $roleName;
+                $assignments[$assignment->roleName] = $assignment;
+            }
+        }
+        return $assignments;
+
     }
 
     /**
      * @inheritdoc
      */
-   protected function loadFromFile($file) : array
-   {
-      if ($this->assignmentFile == $file) {
-          $query = (new Query)->select('*')->from($this->table);
-          $assignments = [];
-          foreach ($query->all($this->db) as $row) {
-              $assignments[$row['user_id']] = json_decode($row['assignments'], true);
-          }
-          return $assignments;
-      } else {
-          return parent::loadFromFile($file);
-      }
-   }
+    public function getAssignment($role, $id)
+    {
+        if ($id && $user = $this->getUser($id)) {
+            if (in_array($role, $user->getAuthRoleNames())) {
+                $assignment = new Assignment();
+                $assignment->userId = $id;
+                $assignment->roleName = $role;
+
+                return $assignment;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUserIdsByRole($role)
+    {
+        return $this->model::findAuthIdsByRoleName($role);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function loadFromFile($file) : array
+    {
+        if ($this->assignmentFile == $file) {
+          return [];
+        }
+        return parent::loadFromFile($file);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function assign($role, $id)
+    {
+        if ($id && $user = $this->getUser($id)) {
+            if (in_array($role->name, $user->getAuthRoleNames())) {
+                throw new InvalidParamException(
+                    Yii::t(
+                        'sys/user',
+                        'Authorization item [{role}] has already been assigned to user [{id}]',
+                        [
+                            'role' => $role->name,
+                            'id'   => $id
+                        ]
+                    )
+                );
+            } else {
+                $assignment = new Assignment([
+                    'userId' => $id,
+                    'roleName' => $role->name,
+                    'createdAt' => time(),
+                ]);
+                $user->addAuthRoleName($role->name);
+                return $assignment;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function revoke($role, $id)
+    {
+        if ($id && $user = $this->getUser($id)) {
+            if (in_array($role->name, $user->getAuthRoleNames())) {
+                $user->removeAuthRoleName($role->name);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function revokeAll($id)
+    {
+        if ($id && $user = $this->getUser($id)) {
+            $user->clearAuthRoleNames();
+            return true;
+        }
+        return false;
+    }
 
     /**
      * @inheritdoc
@@ -60,27 +142,25 @@ class HybridManager extends PhpManager
    public function saveToFile($data, $file) : void
    {
        if ($this->assignmentFile == $file) {
-           $transaction = $this->db->beginTransaction();
-           try {
-               foreach ($data as $key => $value) {
-                   $this->db->createCommand()
-                       ->delete($this->table, ['user_id' => $key])
-                       ->execute();
-                   $this->db->createCommand()
-                       ->insert($this->table, [
-                           'user_id'     => $key,
-                           'assignments' => json_encode($value),
-                           'updated_at'  => time()
-                       ])
-                       ->execute();
-               }
-               $transaction->commit();
-           } catch(\Exception $e) {
-               $transaction->rollBack();
-               throw $e;
-           }
-       } else {
-           parent::saveToFile($data, $file);
+           return;
        }
+       parent::saveToFile($data, $file);
    }
+
+    /**
+     * @param $id
+     * @return array|ActiveRecord
+     */
+    public function getUser($id) : ActiveRecord
+    {
+        $user = Yii::$app->get('user', false);
+        if ($user && !$user->getIsGuest() && $user->getId() == $id) {
+            return $user->getIdentity()->getUser();
+        }
+        /* @var $user ActiveRecord */
+        if (!$user = $this->model::findOne($id)) {
+            throw new NotFoundException(Yii::t('sys/user', 'User not found'));
+        }
+        return $user;
+    }
 }

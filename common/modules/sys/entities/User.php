@@ -8,9 +8,11 @@
 namespace sys\entities;
 
 use Yii;
+use yii\helpers\Json;
 use yii\db\ActiveRecord;
-use yii\behaviors\TimestampBehavior;
 use sys\helpers\ArrayHelper;
+use yii\behaviors\TimestampBehavior;
+use sys\interfaces\HybridManagerInterface;
 
 /**
  * User model.
@@ -22,10 +24,11 @@ use sys\helpers\ArrayHelper;
  * @property string  $email
  * @property string  $email_confirm_token
  * @property integer $status
+ * @property string  $role
  * @property integer $created_at
  * @property integer $updated_at
  */
-class User extends ActiveRecord
+class User extends ActiveRecord implements HybridManagerInterface
 {
     public const STATUS_BLOCKED = 0;
     public const STATUS_ACTIVE  = 1;
@@ -73,6 +76,7 @@ class User extends ActiveRecord
             'email'                => Yii::t('sys/user', 'Email'),
             'email_confirm_token'  => Yii::t('sys/user', 'Email Confirm Token'),
             'status'               => Yii::t('sys/user', 'Status'),
+            'role'                 => Yii::t('sys/user', 'Role'),
             'created_at'           => Yii::t('sys/user', 'Created At'),
             'updated_at'           => Yii::t('sys/user', 'Updated At'),
         ];
@@ -216,7 +220,6 @@ class User extends ActiveRecord
         return $this->status === self::STATUS_BLOCKED;
     }
 
-
     /**
      * Finds user by username.
      * @param string $username
@@ -256,6 +259,58 @@ class User extends ActiveRecord
         $timestamp = (int) substr($token, strrpos($token, '_') + 1);
         $expire    = 3600;
         return $timestamp + $expire >= time();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAuthRoleNames() : array
+    {
+        return (array) Json::decode($this->role);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setAuthRoleNames(array $roles) : void
+    {
+        $this->updateAttributes(['role' => (string) Json::encode($roles)]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function addAuthRoleName(string $role) : void
+    {
+        $roles = $this->getAuthRoleNames();
+        $roles[] = $role;
+        $this->setAuthRoleNames($roles);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function removeAuthRoleName(string $role) : void
+    {
+        $roles = $this->getAuthRoleNames();
+        $roles = array_diff($roles, [$role]);
+        $this->setAuthRoleNames($roles);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function clearAuthRoleNames() : void
+    {
+        $this->setAuthRoleNames([]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function findAuthIdsByRoleName(string $roleName) : ?array
+    {
+        return static::find()->where(['LIKE', 'role' => $roleName])->select('id')->column();
     }
 
     /**

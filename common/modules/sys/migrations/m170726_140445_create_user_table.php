@@ -33,6 +33,7 @@ class m170726_140445_create_user_table extends Migration
             'email'                => $this->string(),
             'email_confirm_token'  => $this->string()->unique(),
             'status'               => $this->smallInteger()->notNull()->defaultValue(0),
+            'role'                 => $this->text(),
             'created_at'           => $this->integer()->unsigned()->notNull(),
             'updated_at'           => $this->integer()->unsigned()->notNull(),
         ], $tableOptions);

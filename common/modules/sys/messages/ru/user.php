@@ -12,6 +12,7 @@ return [
     'Password Reset Token' => 'Токен сброса пароля',
     'Email' => 'E-mail',
     'Email Confirm Token' => 'Токен сброса e-mail',
+    'Role' => 'Роль',
     'Status' => 'Статус',
     'Created At' => 'Время создания',
     'Updated At' => 'Время последнего обновления',
@@ -31,5 +32,6 @@ return [
     'Removing error' => 'Ошибка при удалении',
     'User not found' => 'Пользователь не найден',
     'Saving error' => 'Ошибка при сохранении',
-    'Form is blocked for {min} minutes' => 'Форма заблокирована на {min} минут'
+    'Form is blocked for {min} minutes' => 'Форма заблокирована на {min} минут',
+    'Authorization item [{role}] has already been assigned to user [{id}]' => 'Роль [{role}] элемента авторизации уже назначена пользователю [{id}]'
 ];
