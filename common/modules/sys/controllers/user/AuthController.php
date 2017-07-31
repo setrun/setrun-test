@@ -7,6 +7,8 @@
 
 namespace sys\controllers\user;
 
+use common\components\Test;
+use sys\Module;
 use Yii;
 use yii\filters\VerbFilter;
 use sys\forms\user\LoginForm;

@@ -16,6 +16,12 @@ use yii\web\Response;
 class BaseController  extends \yii\web\Controller
 {
     /**
+     * Is backend
+     * @var bool
+     */
+    public $isBackend = false;
+
+    /**
      * @var array
      */
     public $output = ['status' => 0];
@@ -24,6 +30,13 @@ class BaseController  extends \yii\web\Controller
      * @var bool
      */
     protected $autoAjax = true;
+
+    public function init()
+    {
+        Yii::setAlias('@theme', $this->view->theme->getBasePath());
+        Yii::$app->assetManager->forceCopy = Yii::$app->config->component('sys.assets.forcedCopy', false);
+        parent::init();
+    }
 
     /**
      * @inheritdoc

@@ -5,12 +5,12 @@
  * @link   https://github.com/dizirator
  */
 
-namespace themes\backend\standard;
+namespace themes\imperial;
 
 use Yii;
 use yii\web\AssetBundle;
 
 class ThemeAsset extends AssetBundle
 {
-    public $sourcePath = '@themes/standard/assets/dist';
+    public $sourcePath = '@themes/imperial/assets/dist';
 }

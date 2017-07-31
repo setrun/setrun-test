@@ -17,5 +17,20 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'config' => 'sys\interfaces\ConfiguratorInterface',
+        'view' => [
+            'theme' => [
+                'class' => 'sys\components\base\Theme'
+            ]
+        ],
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName'  => false,
+            'suffix'          => null,
+            'normalizer' => [
+                'class' => 'yii\web\UrlNormalizer',
+                'action' => \yii\web\UrlNormalizer::ACTION_REDIRECT_TEMPORARY
+            ]
+        ],
     ]
 ];

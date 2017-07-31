@@ -20,7 +20,6 @@ use sys\interfaces\HybridManagerInterface;
  */
 class HybridManager extends PhpManager
 {
-
     /**
      * @var HybridManagerInterface
      */
@@ -29,15 +28,12 @@ class HybridManager extends PhpManager
     /**
      * @inheritdoc
      */
-    public function getAssignments($id)
+    public function getAssignments($uid)
     {
         $assignments = [];
-        if ($id && $user = $this->getUser($id)) {
+        if ($uid && $user = $this->getUser($uid)) {
             foreach ($user->getAuthRoleNames() as $roleName) {
-                $assignment = new Assignment();
-                $assignment->userId = $id;
-                $assignment->roleName = $roleName;
-                $assignments[$assignment->roleName] = $assignment;
+                $assignments[$roleName] = new Assignment(['userId' => $uid, 'roleName' => $roleName]);
             }
         }
         return $assignments;
@@ -47,15 +43,11 @@ class HybridManager extends PhpManager
     /**
      * @inheritdoc
      */
-    public function getAssignment($role, $id)
+    public function getAssignment($roleName, $uid)
     {
-        if ($id && $user = $this->getUser($id)) {
-            if (in_array($role, $user->getAuthRoleNames())) {
-                $assignment = new Assignment();
-                $assignment->userId = $id;
-                $assignment->roleName = $role;
-
-                return $assignment;
+        if ($uid && $user = $this->getUser($uid)) {
+            if (in_array($roleName, $user->getAuthRoleNames())) {
+                return new Assignment(['userId' => $uid, 'roleName' => $roleName]);
             }
         }
         return null;
@@ -64,45 +56,29 @@ class HybridManager extends PhpManager
     /**
      * @inheritdoc
      */
-    public function getUserIdsByRole($role)
+    public function getUserIdsByRole($roleName)
     {
-        return $this->model::findAuthIdsByRoleName($role);
+        return $this->model::findAuthIdsByRoleName($roleName);
     }
+
+
 
     /**
      * @inheritdoc
      */
-    protected function loadFromFile($file) : array
+    public function assign($role, $uid)
     {
-        if ($this->assignmentFile == $file) {
-          return [];
-        }
-        return parent::loadFromFile($file);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function assign($role, $id)
-    {
-        if ($id && $user = $this->getUser($id)) {
+        if ($uid && $user = $this->getUser($uid)) {
             if (in_array($role->name, $user->getAuthRoleNames())) {
                 throw new InvalidParamException(
                     Yii::t(
                         'sys/user',
                         'Authorization item [{role}] has already been assigned to user [{id}]',
-                        [
-                            'role' => $role->name,
-                            'id'   => $id
-                        ]
+                        [ 'role' => $role->name, 'id'   => $uid]
                     )
                 );
             } else {
-                $assignment = new Assignment([
-                    'userId' => $id,
-                    'roleName' => $role->name,
-                    'createdAt' => time(),
-                ]);
+                $assignment = new Assignment(['userId' => $uid, 'roleName' => $role->name]);
                 $user->addAuthRoleName($role->name);
                 return $assignment;
             }
@@ -113,9 +89,9 @@ class HybridManager extends PhpManager
     /**
      * @inheritdoc
      */
-    public function revoke($role, $id)
+    public function revoke($role, $uid)
     {
-        if ($id && $user = $this->getUser($id)) {
+        if ($uid && $user = $this->getUser($uid)) {
             if (in_array($role->name, $user->getAuthRoleNames())) {
                 $user->removeAuthRoleName($role->name);
                 return true;
@@ -127,9 +103,9 @@ class HybridManager extends PhpManager
     /**
      * @inheritdoc
      */
-    public function revokeAll($id)
+    public function revokeAll($uid)
     {
-        if ($id && $user = $this->getUser($id)) {
+        if ($uid && $user = $this->getUser($uid)) {
             $user->clearAuthRoleNames();
             return true;
         }
@@ -139,19 +115,30 @@ class HybridManager extends PhpManager
     /**
      * @inheritdoc
      */
-   public function saveToFile($data, $file) : void
-   {
-       if ($this->assignmentFile == $file) {
+    protected function loadFromFile($file) : array
+    {
+        if ($this->assignmentFile == $file) {
+            return [];
+        }
+        return parent::loadFromFile($file);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function saveToFile($data, $file) : void
+    {
+        if ($this->assignmentFile == $file) {
            return;
-       }
-       parent::saveToFile($data, $file);
-   }
+        }
+        parent::saveToFile($data, $file);
+    }
 
     /**
      * @param $id
      * @return array|ActiveRecord
      */
-    public function getUser($id) : ActiveRecord
+    private function getUser($id) : ActiveRecord
     {
         $user = Yii::$app->get('user', false);
         if ($user && !$user->getIsGuest() && $user->getId() == $id) {

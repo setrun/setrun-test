@@ -5,6 +5,7 @@
  * @link   https://github.com/dizirator
  */
 
+$configurator = Yii::$container->get(\sys\interfaces\ConfiguratorInterface::class);
 $params = array_merge(
     require(__DIR__ . '/../../../common/config/params.php'),
     require(__DIR__ . '/../../../common/config/params-local.php'),
@@ -33,7 +34,12 @@ return [
                     'logVars' => ['_GET', '_POST', '_FILES', '_COOKIE', '_SESSION']
                 ],
             ],
-        ]
+        ],
+        'view' => [
+            'theme' => [
+                'basePath' => '@themes/' . $configurator->component('sys.theme'),
+            ],
+        ],
     ],
     'params' => $params,
 ];

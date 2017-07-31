@@ -5,20 +5,31 @@
  * @link   https://github.com/dizirator
  */
 
-require(__DIR__ . '/../../../vendor/autoload.php');
-require(__DIR__ . '/../../../functions.php');
+define('ROOT_PATH', __DIR__  . '/../../..');
+define('APP_PATH', __DIR__  . '/..');
 
-require(__DIR__ . '/../environment.php');
-require(__DIR__ . '/../../../vendor/yiisoft/yii2/Yii.php');
-require(__DIR__ . '/../../../common/config/bootstrap.php');
-require(__DIR__ . '/../config/bootstrap.php');
+require(ROOT_PATH  . '/vendor/autoload.php');
+require(ROOT_PATH  . '/functions.php');
 
-$config = yii\helpers\ArrayHelper::merge(
-    require(__DIR__ . '/../../../common/config/main.php'),
-    require(__DIR__ . '/../../../common/config/main-local.php'),
-    require(__DIR__ . '/../config/main.php'),
-    require(__DIR__ . '/../config/main-local.php'),
-    require(__DIR__ . '/../../../common/modules/sys/config/sys.php')
-);
+require(APP_PATH  . '/environment.php');
+require(ROOT_PATH . '/vendor/yiisoft/yii2/Yii.php');
+require(ROOT_PATH . '/common/config/bootstrap.php');
+require(APP_PATH  . '/config/bootstrap.php');
 
-(new yii\web\Application($config))->run();
+\Yii::$container->setSingleton(\sys\interfaces\ConfiguratorInterface::class, \sys\components\Configurator::class);
+
+$configurator = Yii::$container->get(\sys\interfaces\ConfiguratorInterface::class);
+$configurator->setEnv(\sys\components\Configurator::WEB);
+$configurator->setCachePath(APP_PATH . '/runtime/cache_configurator');
+$configurator->load([
+    ROOT_PATH . '/common/config/main.php',
+    ROOT_PATH . '/common/config/main-local.php',
+    APP_PATH  . '/config/main.php',
+    APP_PATH  . '/config/main-local.php'
+]);
+(new yii\web\Application($configurator->configure()))->run();
+
+
+
+
+

@@ -151,6 +151,14 @@ class UserController extends Controller
         $backend->description = 'Backend panel Permission';
         $auth->add($backend);
 
+        $assetsForcedCopy = $auth->createPermission('assetsForcedCopy');
+        $assetsForcedCopy->description = 'Assets Forced Copy Permission';
+        $auth->add($assetsForcedCopy);
+
+        $notDenyAccess = $auth->createPermission('notDenyAccess');
+        $notDenyAccess->description = 'notDenyAccess Permission';
+        $auth->add($notDenyAccess);
+
         $user = $auth->createRole('user');
         $user->description = 'User Role';
         $auth->add($user);
@@ -161,6 +169,8 @@ class UserController extends Controller
 
         $auth->addChild($admin, $user);
         $auth->addChild($admin, $backend);
+        $auth->addChild($admin, $notDenyAccess);
+        $auth->addChild($admin, $assetsForcedCopy);
 
         $this->log(true);
     }

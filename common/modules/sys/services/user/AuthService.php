@@ -19,8 +19,8 @@ use sys\repositories\user\UserRepository;
 class AuthService
 {
     public const FAILURE      = 3;
-    public const FAILURE_TIME = 60 * 5;
-    public const REMEMBER     = 3600 *24 * 30;
+    public const FAILURE_TIME = (60 * 5);
+    public const REMEMBER     = (60 * 60 * 24 * 30);
 
     /**
      * @var UserRepository

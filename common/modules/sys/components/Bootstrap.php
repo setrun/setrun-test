@@ -23,7 +23,6 @@ class Bootstrap implements BootstrapInterface
     public function bootstrap($app) : void
     {
         $container = Yii::$container;
-
         $container->setSingleton(i18nInterface::class, i18nService::class);
     }
 }

@@ -61,19 +61,13 @@ class Identity implements IdentityInterface
         return $this->user->id;
     }
 
-    public function getUser()
+    /**
+     * Get a user entity.
+     * @return User
+     */
+    public function getUser() : User
     {
         return $this->user;
-    }
-
-
-    /**
-     * Get a user role.
-     * @return array
-     */
-    public function getRole() : array
-    {
-        return json_decode($this->user->role, true);
     }
 
     /**

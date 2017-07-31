@@ -5,6 +5,9 @@
  * @link   https://github.com/dizirator
  */
 
+$configurator = Yii::$container->get(\sys\interfaces\ConfiguratorInterface::class);
+$slug = $configurator->component('sys.backend.slug', 'adm');
+
 return [
     'bootstrap' => ['sys\components\Bootstrap'],
     'components' => [
@@ -19,11 +22,13 @@ return [
             'class' => 'sys\components\rbac\HybridManager'
         ],
         'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName'  => false,
             'rules' => [
                 "<_a:(login|logout)>" => "sys/user/auth/<_a>",
-            ],
+                "{$slug}" => "sys/backend/backend/index",
+                "{$slug}/<_m:\w+>/<_c:\w+(-\w+)*>" => "<_m>/backend/<_c>/index",
+                "{$slug}/<_m:\w+>/<_c:[-\w]+>/<_a:[-\w]+>/<id:\d+>" => "<_m>/backend/<_c>/<_a>",
+                "{$slug}/<_m:\w+>/<_c:[-\w]+>/<_a:[-\w]+>" => "<_m>/backend/<_c>/<_a>"
+            ]
         ],
         'user' => [
             'identityClass' => 'sys\components\user\Identity',

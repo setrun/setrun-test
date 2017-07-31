@@ -7,6 +7,7 @@
 
 namespace common\components;
 
+use common\components\Test;
 use Yii;
 use yii\base\BootstrapInterface;
 
