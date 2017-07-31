@@ -125,15 +125,30 @@ class Configurator implements ConfiguratorInterface
     }
 
     /**
-     * Updated configuration by user.
+     * Update configuration by user.
      * @param $uid
      * @return void
      */
     public function updateByUser($uid) : void
     {
-        $key    = self::COMPONENTS . $uid;
+        $key    = self::COMPONENTS . '_user' . $uid;
         $config = $this->getCache()->getOrSet($key, function() use ($uid) {
             return $this->loadComponentsConfigByUser($uid);
+        });
+        $this->configComponents = array_replace_recursive($this->configComponents, $config);
+        unset($config);
+    }
+
+    /**
+     * Update configuration by user.
+     * @param $did
+     * @return void
+     */
+    public function updateByDomain($did) : void
+    {
+        $key    = self::COMPONENTS . '_domain' . $did;
+        $config = $this->getCache()->getOrSet($key, function() use ($did) {
+            return $this->loadComponentsConfigByDomain($did);
         });
         $this->configComponents = array_replace_recursive($this->configComponents, $config);
         unset($config);
@@ -212,6 +227,24 @@ class Configurator implements ConfiguratorInterface
                                ->from($this->table)
                                ->where(['user_id' => $uid])
                                ->all($this->getDb());
+        foreach ($query as $row) {
+            $config[$row['name']] = json_decode($row['json_value'], true);
+        }
+        return $config;
+    }
+
+    /**
+     * Load a configuration of modules bu domain.
+     * @param $did
+     * @return array
+     */
+    protected function loadComponentsConfigByDomain($did) : array
+    {
+        $config = [];
+        $query  = (new Query())->select('*')
+            ->from($this->table)
+            ->where(['did' => $did])
+            ->all($this->getDb());
         foreach ($query as $row) {
             $config[$row['name']] = json_decode($row['json_value'], true);
         }
