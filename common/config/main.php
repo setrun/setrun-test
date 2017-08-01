@@ -31,6 +31,6 @@ return [
                 'class' => 'yii\web\UrlNormalizer',
                 'action' => \yii\web\UrlNormalizer::ACTION_REDIRECT_TEMPORARY
             ]
-        ],
+        ]
     ]
 ];

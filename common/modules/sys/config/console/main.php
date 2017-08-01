@@ -28,5 +28,12 @@ return [
         'sys' => [
             'class' => 'sys\Module'
         ]
-    ]
+    ],
+    'controllerMap' => [
+        'migrate' => [
+            'migrationNamespaces' => [
+                'sys\migrations'
+            ],
+        ]
+    ],
 ];

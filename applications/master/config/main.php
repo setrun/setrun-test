@@ -13,7 +13,7 @@ $params = array_merge(
     require(__DIR__ . '/params-local.php')
 );
 return [
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log', 'queue'],
     'id' => 'app-master',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'app\controllers',
@@ -39,6 +39,10 @@ return [
             'theme' => [
                 'basePath' => '@themes/' . $configurator->component('sys.theme'),
             ],
+        ],
+        'queue' => [
+            'class' => \yii\queue\db\Queue::class,
+            'mutex' => \yii\mutex\MysqlMutex::class
         ],
     ],
     'params' => $params,

@@ -16,6 +16,7 @@ use yii\filters\AccessControl;
 use sys\components\user\Identity;
 use sys\services\user\AuthService;
 use sys\components\controllers\FrontController;
+use sys\queue\DownloadJob;
 
 /**
  * Class UserController.

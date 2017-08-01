@@ -14,7 +14,7 @@ $params = array_merge(
 return [
     'id' => 'app-master-console',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log', 'queue'],
     'controllerNamespace' => 'app\commands',
     'components' => [
         'log' => [
@@ -25,6 +25,19 @@ return [
                 ],
             ],
         ],
+        'queue' => [
+            'class' => \yii\queue\db\Queue::class,
+            'mutex' => \yii\mutex\MysqlMutex::class
+        ],
     ],
     'params' => $params,
+    'controllerMap' => [
+        'migrate' => [
+            'class' => 'yii\console\controllers\MigrateController',
+            'migrationPath' => null,
+            'migrationNamespaces' => [
+                'yii\queue\db\migrations'
+            ],
+        ],
+    ]
 ];

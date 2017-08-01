@@ -5,6 +5,8 @@
  * @link   https://github.com/dizirator
  */
 
+namespace sys\migrations;
+
 use yii\db\Migration;
 
 /**
