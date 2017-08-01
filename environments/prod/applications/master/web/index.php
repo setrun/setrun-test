@@ -27,7 +27,7 @@ $configurator->load([
     APP_PATH  . '/config/main.php',
     APP_PATH  . '/config/main-local.php'
 ]);
-(new yii\web\Application($configurator->configure()))->run();
+(new yii\web\Application($configurator->application()))->run();
 
 
 

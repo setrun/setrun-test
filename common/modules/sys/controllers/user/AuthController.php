@@ -39,6 +39,7 @@ class AuthController extends FrontController
     {
         parent::__construct($id, $module, $config);
         $this->service = $service;
+        Yii::$app->config->component();
     }
 
     /**

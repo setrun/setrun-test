@@ -7,34 +7,27 @@
 
 namespace sys\components;
 
+use sys\components\configurator\Storage;
 use Yii;
 use yii\db\Query;
 use yii\db\Connection;
 use yii\caching\FileCache;
 use sys\helpers\ArrayHelper;
 use yii\base\InvalidConfigException;
-use sys\interfaces\ConfiguratorInterface;
 
 /**
  * Class Configurator.
  */
-class Configurator implements ConfiguratorInterface
+class Configurator
 {
     public const WEB        = 'application.web';
     public const CONSOLE    = 'application.console';
-    public const COMPONENTS = 'components';
 
     /**
      * List of configurations application.
      * @var array
      */
-    protected $configApplication = [];
-
-    /**
-     * List of configurations components.
-     * @var array
-     */
-    protected $configComponents = [];
+    protected $appConfig = [];
 
     /**
      * Env state.
@@ -55,23 +48,9 @@ class Configurator implements ConfiguratorInterface
     protected $cachePath = '@app/runtime/cache_configurator';
 
     /**
-     * List of system files.
-     * @var array
+     * @var Storage
      */
-    protected $sysFiles = [
-        self::WEB     => [
-            '@sys/config/main.php'
-        ],
-        self::CONSOLE => [
-            '@sys/config/console/main.php'
-        ],
-    ];
-
-    /**
-     * Name of table.
-     * @var string
-     */
-    protected $table = '{{%component_setting}}';
+    protected $storage = null;
 
     /**
      * Set of env state.
@@ -102,9 +81,35 @@ class Configurator implements ConfiguratorInterface
     public function component($key = null, $default = null)
     {
         if ($key == null) {
-            return $this->configComponents;
+            return $this->storage()->get('components', []);
         }
-        return ArrayHelper::getValue($this->configComponents, $key, $default);
+        return $this->storage()->get('components.' . $key, []);
+    }
+
+    /**
+     * Get a configurations of launch app.
+     * @param bool $null
+     * @return array
+     */
+    public function application(bool $null = true) : array
+    {
+        $config = $this->appConfig;
+        if ($null) {
+            $this->appConfig = [];
+        }
+        return $config;
+    }
+
+    /**
+     * Get storage interface.
+     * @return Storage
+     */
+    public function storage() : Storage
+    {
+        if ($this->storage == null) {
+            $this->storage = new Storage($this->getDb(), $this->getCache());
+        }
+        return $this->storage;
     }
 
     /**
@@ -114,10 +119,8 @@ class Configurator implements ConfiguratorInterface
      */
     public function load(array $files) : void
     {
-        $this->configComponents = $this->getCache()->getOrSet(self::COMPONENTS, function(){
-            return $this->loadComponentsConfig();
-        });
-        $this->configApplication = $this->getCache()->getOrSet($this->env, function() use ($files){
+        $this->loadStorageConfig();
+        $this->appConfig = $this->getCache()->getOrSet($this->env, function() use ($files){
             $baseConfig            = $this->loadBaseConfig($files);
             $installedModuleConfig = $this->loadInstalledModuleConfig();
             return ArrayHelper::merge($baseConfig, $installedModuleConfig);
@@ -129,13 +132,13 @@ class Configurator implements ConfiguratorInterface
      * @param $uid
      * @return void
      */
-    public function updateByUser($uid) : void
+    public function updateComponentsByUser($uid) : void
     {
-        $key    = self::COMPONENTS . '_user' . $uid;
+        $key    = 'components.user.' . $uid;
         $config = $this->getCache()->getOrSet($key, function() use ($uid) {
             return $this->loadComponentsConfigByUser($uid);
         });
-        $this->configComponents = array_replace_recursive($this->configComponents, $config);
+        $this->storage()->set('components', $config);
         unset($config);
     }
 
@@ -144,13 +147,13 @@ class Configurator implements ConfiguratorInterface
      * @param $did
      * @return void
      */
-    public function updateByDomain($did) : void
+    public function updateComponentsByDomain($did) : void
     {
-        $key    = self::COMPONENTS . '_domain' . $did;
+        $key    = 'components.domain.' . $did;
         $config = $this->getCache()->getOrSet($key, function() use ($did) {
             return $this->loadComponentsConfigByDomain($did);
         });
-        $this->configComponents = array_replace_recursive($this->configComponents, $config);
+        $this->storage()->set('components', $config);
         unset($config);
     }
 
@@ -161,7 +164,6 @@ class Configurator implements ConfiguratorInterface
      */
     protected function loadBaseConfig(array $files) : array
     {
-        $files = ArrayHelper::merge($files, $this->sysFiles[$this->env] ?? []);
         $config = [];
         foreach ($files as $file) {
             if (file_exists($file = Yii::getAlias($file))) {
@@ -172,16 +174,47 @@ class Configurator implements ConfiguratorInterface
     }
 
     /**
+     * Load storage configs.
+     * @return void
+     */
+    protected function loadStorageConfig() : void
+    {
+        $this->storage()->getOrSet('domain', function ($cache){
+            return (new Query())->select('*')
+                                ->from('{{%domain}}')
+                                ->indexBy('domain')
+                                ->all($this->getDb());
+        });
+        $this->storage()->getOrSet('language', function ($cache){
+            return (new Query())->select('*')
+                                ->from('{{%language}}')
+                                ->indexBy('slug')
+                                ->all($this->getDb());
+        });
+        $this->storage()->getOrSet('components', function ($cache){
+            $config = [];
+            $query  = (new Query())->select('*')
+                                   ->from('{{%component_setting}}')
+                                   ->where(['user_id' => null])
+                                   ->all($this->getDb());
+            foreach ($query as $row) {
+                $config[$row['name']] = json_decode($row['json_value'], true);
+            }
+            return $config;
+        });
+    }
+
+    /**
      * Load a base configuration of installed modules.
      * @return array
      */
     protected function loadInstalledModuleConfig() : array
     {
         $config = [];
-        $appPath            = defined('APP_PATH') ? APP_PATH : ROOT_PATH . '/applications/master';
-        $installedPath      = $appPath . '/config/modules' . ($this->env === self::WEB ? '' : '/console');
+        $appPath            = defined('APP_DIR') ? APP_DIR : ROOT_DIR . '/applications/master';
+        $installedPath      = $appPath . '/config/modules' . ($this->env == self::WEB ? '' : '/console');
         $installedLocalPath = $installedPath . '/local';
-        $modulesPath        = ROOT_PATH . '/common/modules';
+        $modulesPath        = ROOT_DIR . '/common/modules';
         /** @var $item \SplFileInfo  */
         foreach (new \GlobIterator($installedPath . '/*.php') as $item) {
             $name = $item->getBaseName('.php');
@@ -199,23 +232,6 @@ class Configurator implements ConfiguratorInterface
     }
 
     /**
-     * Load a configuration of modules.
-     * @return array
-     */
-    protected function loadComponentsConfig() : array
-    {
-        $config = [];
-        $query  = (new Query())->select('*')
-                               ->from($this->table)
-                               ->where(['user_id' => null])
-                               ->all($this->getDb());
-        foreach ($query as $row) {
-            $config[$row['name']] = json_decode($row['json_value'], true);
-        }
-        return $config;
-    }
-
-    /**
      * Load a configuration of modules bu user.
      * @param $uid
      * @return array
@@ -224,7 +240,7 @@ class Configurator implements ConfiguratorInterface
     {
         $config = [];
         $query  = (new Query())->select('*')
-                               ->from($this->table)
+                               ->from('{{%component_setting}}')
                                ->where(['user_id' => $uid])
                                ->all($this->getDb());
         foreach ($query as $row) {
@@ -242,25 +258,11 @@ class Configurator implements ConfiguratorInterface
     {
         $config = [];
         $query  = (new Query())->select('*')
-            ->from($this->table)
-            ->where(['did' => $did])
-            ->all($this->getDb());
+                               ->from('{{%component_setting}}')
+                               ->where(['did' => $did])
+                               ->all($this->getDb());
         foreach ($query as $row) {
             $config[$row['name']] = json_decode($row['json_value'], true);
-        }
-        return $config;
-    }
-
-    /**
-     * Get a configurations of launch app.
-     * @param bool $null
-     * @return array
-     */
-    public function configure(bool $null = true) : array
-    {
-        $config = $this->configApplication;
-        if ($null) {
-          $this->configApplication = [];
         }
         return $config;
     }
@@ -287,7 +289,7 @@ class Configurator implements ConfiguratorInterface
      */
     public function getDb() : Connection
     {
-        $file = APP_PATH . '/config/db-local.php';
+        $file = APP_DIR . '/config/db-local.php';
         if (!file_exists($file)) {
             throw new InvalidConfigException('Failed to instantiate component or class "db".');
         }

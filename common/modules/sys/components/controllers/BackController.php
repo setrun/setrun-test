@@ -50,17 +50,12 @@ class BackController extends BaseController
      */
     public function init()
     {
-        $this->view->theme->setBasePath('@themes/backend/' . Yii::$app->config->component('sys.backend.theme'), false);
+        $this->view->theme->setBasePath(
+            '@themes/backend/' . Yii::$app->get('config')->component('sys.backend.theme')
+        );
+        Yii::$app->assetManager->forceCopy =
+                                 Yii::$app->get('config')->component('sys.backend.assets.forcedCopy', false);
         parent::init();
 
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function beforeAction($action)
-    {
-        Yii::$app->assetManager->forceCopy = Yii::$app->config->component('sys.backend.assets.forcedCopy', false);
-        return parent::beforeAction($action);
     }
 }

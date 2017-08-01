@@ -8,29 +8,27 @@
  * @license http://www.yiiframework.com/license/
  */
 
-define('ROOT_PATH', __DIR__  . '/../..');
-define('APP_PATH',  __DIR__ );
+define('ROOT_DIR', __DIR__  . '/../..');
+define('APP_DIR',  __DIR__ );
 
-require(ROOT_PATH . '/vendor/autoload.php');
-require(ROOT_PATH . '/functions.php');
+require(ROOT_DIR . '/vendor/autoload.php');
+require(ROOT_DIR . '/functions.php');
+require(APP_DIR  . '/environment.php');
+require(ROOT_DIR . '/vendor/yiisoft/yii2/Yii.php');
+require(ROOT_DIR . '/common/bootstrap.php');
+require(APP_DIR  . '/bootstrap.php');
 
-require(__DIR__   . '/environment.php');
-require(ROOT_PATH . '/vendor/yiisoft/yii2/Yii.php');
-require(ROOT_PATH . '/common/config/bootstrap.php');
-require(__DIR__   . '/config/bootstrap.php');
-
-\Yii::$container->setSingleton(\sys\interfaces\ConfiguratorInterface::class, \sys\components\Configurator::class);
-
-$configurator = Yii::$container->get(\sys\interfaces\ConfiguratorInterface::class);
+$configurator = Yii::$container->get(\sys\components\Configurator::class);
 $configurator->setEnv(\sys\components\Configurator::CONSOLE);
-$configurator->setCachePath(__DIR__ . '/runtime/cache_configurator');
+$configurator->setCachePath(APP_DIR . '/runtime/cache_configurator');
 $configurator->load([
-    ROOT_PATH . '/common/config/main.php',
-    ROOT_PATH . '/common/config/main-local.php',
-    __DIR__   . '/config/console.php',
-    __DIR__   . '/config/console-local.php'
+    ROOT_DIR . '/common/config/main.php',
+    ROOT_DIR . '/common/config/console.php',
+    APP_DIR  . '/config/main.php',
+    APP_DIR  . '/config/main-local.php',
+    APP_DIR  . '/config/console.php',
+    APP_DIR  . '/config/console-local.php'
 ]);
-
-$application = new yii\console\Application($configurator->configure());
+$application = new yii\console\Application($configurator->application());
 $exitCode = $application->run();
 exit($exitCode);

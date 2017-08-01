@@ -6,7 +6,5 @@
  */
 
 return [
-    'components' => [
-        'db' => require __DIR__ . '/db-local.php',
-    ]
+
 ];

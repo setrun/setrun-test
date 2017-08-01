@@ -61,8 +61,6 @@ class HybridManager extends PhpManager
         return $this->model::findAuthIdsByRoleName($roleName);
     }
 
-
-
     /**
      * @inheritdoc
      */

@@ -7,15 +7,14 @@
 
 return [
     'denyAccess' => false,
-    'theme'      => 'default',
+    'theme'      => 'imperial',
     'assets' => [
         'forcedCopy' => true,
         'isPermissionForcedCopy' => true
     ],
     'email' => 'dizirator@gmail.com',
     'backend' => [
-        'slug'   => 'adm',
-        'theme'  => 'default',
+        'theme'  => 'imperial',
         'assets' => [
             'forcedCopy' => true
         ]

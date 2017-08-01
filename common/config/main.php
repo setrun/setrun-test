@@ -6,31 +6,65 @@
  */
 
 return [
-    'bootstrap' => ['common\components\Bootstrap'],
+    'bootstrap' => ['log', 'queue'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset'
     ],
-    'language'   => 'ru_Ru',
     'vendorPath' => dirname(dirname(__DIR__) ). '/vendor',
     'components' => [
+        'authManager' => [
+            'class' => 'sys\components\rbac\HybridManager'
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
-        'config' => 'sys\interfaces\ConfiguratorInterface',
-        'view' => [
-            'theme' => [
-                'class' => 'sys\components\base\Theme'
+        'config' => [
+            'class' => 'sys\components\Configurator'
+        ],
+        'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'targets' => [
+                [
+                    'class'   => 'yii\log\FileTarget',
+                    'levels'  => ['error'],
+                    'logFile' => '@runtime/logs/web-error.log',
+                    'logVars' => ['_GET', '_COOKIE', '_SESSION']
+                ],
+                [
+                    'class'   => 'yii\log\FileTarget',
+                    'levels'  => ['warning'],
+                    'logFile' => '@runtime/logs/web-warning.log',
+                    'logVars' => ['_GET', '_COOKIE', '_SESSION']
+                ],
+            ],
+        ],
+
+        'i18n' => [
+            'translations' => [
+                'sys*' => [
+                    'class'    => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@sys/messages',
+                    'fileMap' => [
+                        'sys'      => 'sys.php',
+                        'sys/user' => 'user.php',
+                    ]
+                ]
             ]
         ],
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName'  => false,
-            'suffix'          => null,
-            'normalizer' => [
-                'class' => 'yii\web\UrlNormalizer',
-                'action' => \yii\web\UrlNormalizer::ACTION_REDIRECT_TEMPORARY
-            ]
+        'queue' => [
+            'class'  => \yii\queue\db\Queue::class,
+            'mutex'  => \yii\mutex\MysqlMutex::class,
+            'as log' => \yii\queue\LogBehavior::class
+        ],
+        'mailer' => [
+            'class'    => 'yii\swiftmailer\Mailer',
+            'viewPath' => '@app/views/mail'
+        ],
+    ],
+    'modules' => [
+        'sys' => [
+            'class' => 'sys\Module'
         ]
     ]
 ];

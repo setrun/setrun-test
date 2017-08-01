@@ -44,7 +44,7 @@ return [
             'applications/master/yii'
         ],
         'setCookieValidationKey' => [
-            'applications/master/config/main-local.php'
+            'applications/master/config/web-local.php'
         ],
     ],
     'Production' => [
@@ -60,7 +60,7 @@ return [
             'applications/master/yii'
         ],
         'setCookieValidationKey' => [
-            'applications/master/config/main-local.php'
+            'applications/master/config/web-local.php'
         ],
     ],
 ];

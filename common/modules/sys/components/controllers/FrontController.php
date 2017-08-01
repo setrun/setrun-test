@@ -19,13 +19,13 @@ class FrontController extends BaseController
      */
     public function beforeAction($action)
     {
-        $config = Yii::$app->config;
+        $config = Yii::$app->get('config');
         if ($config->component('sys.denyAccess', false)) {
             if (!Yii::$app->user->can('notDenyAccess') && !in_array($action->id, $this->allowActions())) {
                 exit($this->renderPartial('@theme/deny-access'));
             }
         }
-        if ($config->component('sys.assets.isPermissionForcedCopy', false)) {
+        if (!Yii::$app->user->isGuest && $config->component('sys.assets.isPermissionForcedCopy', false)) {
             if (Yii::$app->user->can('assetsForcedCopy')) {
                 Yii::$app->assetManager->forceCopy = true;
             }

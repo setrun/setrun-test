@@ -13,10 +13,9 @@ use yii\base\InvalidParamException;
 function findApplicationByDomain() : void
 {
     $default = $app = 'master';
-
-    $file    = __DIR__ . '/coomon/config/domains.php';
+    $file    = ROOT_DIR . '/common/config/domains.php';
     $domains = file_exists($file) ? (array) require $file : [];
-    $dir     = __DIR__ . '/applications/';
+    $dir     = ROOT_DIR . '/applications/';
 
     foreach ($domains as  $key => $value) {
         if ($_SERVER['HTTP_HOST'] === $key) {
@@ -28,7 +27,7 @@ function findApplicationByDomain() : void
         $app = $default;
     }
     define('APP_NAME', $app);
-    define('APP_PATH', $dir . $app);
+    define('APP_DIR',  $dir . $app);
 }
 
 /**

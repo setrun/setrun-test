@@ -31,10 +31,12 @@ class BaseController  extends \yii\web\Controller
      */
     protected $autoAjax = true;
 
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         Yii::setAlias('@theme', $this->view->theme->getBasePath());
-        Yii::$app->assetManager->forceCopy = Yii::$app->config->component('sys.assets.forcedCopy', false);
         parent::init();
     }
 

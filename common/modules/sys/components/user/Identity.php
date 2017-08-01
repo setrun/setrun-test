@@ -40,7 +40,6 @@ class Identity implements IdentityInterface
         return $user ? new self($user) : null;
     }
 
-
     /**
      * Finds an identity by the given token.
      * @param  string $token
