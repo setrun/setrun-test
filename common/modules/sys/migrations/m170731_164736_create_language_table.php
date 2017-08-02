@@ -10,14 +10,14 @@ namespace sys\migrations;
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `language`.
+ * Handles the creation of table `sys_language`.
  */
 class m170731_164736_create_language_table extends Migration
 {
     /**
      * @var string Name of create a table
      */
-    private $table = '{{%language}}';
+    private $table = '{{%sys_language}}';
 
     /**
      * @inheritdoc
@@ -43,12 +43,12 @@ class m170731_164736_create_language_table extends Migration
             'updated_at'  => $this->integer()->notNull()
         ], $tableOptions);
 
-        $this->createIndex('{{%idx-language-name}}',   $this->table, 'name');
-        $this->createIndex('{{%idx-language-slug}}',   $this->table, 'slug');
-        $this->createIndex('{{%idx-language-alias}}',  $this->table, 'alias');
-        $this->createIndex('{{%idx-language-status}}', $this->table, 'status');
+        $this->createIndex('{{%idx-sys_language-name}}',   $this->table, 'name');
+        $this->createIndex('{{%idx-sys_language-slug}}',   $this->table, 'slug');
+        $this->createIndex('{{%idx-sys_language-alias}}',  $this->table, 'alias');
+        $this->createIndex('{{%idx-sys_language-status}}', $this->table, 'status');
 
-        $this->addForeignKey('{{%fk-language-domain}}', $this->table, 'did',     '{{%domain}}', 'id', 'CASCADE');
+        $this->addForeignKey('{{%fk-sys_language-domain}}', $this->table, 'did',     '{{%sys_domain}}', 'id', 'CASCADE');
     }
 
     /**

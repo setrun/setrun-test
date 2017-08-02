@@ -74,11 +74,42 @@ themes\backend\imperial\assets\ThemeAsset::register($this);
                 </div>
             </div>
             <!-- sidebar menu: : style can be found in sidebar.less -->
-            <ul class="sidebar-menu" data-widget="tree">
-                <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Important</span></a></li>
-                <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>Warning</span></a></li>
-                <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>Information</span></a></li>
-            </ul>
+            <?= \sys\widgets\backend\Menu::widget(
+                [
+                    'items' => [
+                        ['label' => 'Menu Yii2', 'options' => ['class' => 'header']],
+                        ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']],
+                        ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
+                        ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
+                        [
+                            'label' => 'Same tools',
+                            'icon' => 'share',
+                            'url' => '#',
+                            'items' => [
+                                ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii'],],
+                                ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug'],],
+                                [
+                                    'label' => 'Level One',
+                                    'icon' => 'circle-o',
+                                    'url' => '#',
+                                    'items' => [
+                                        ['label' => 'Level Two', 'icon' => 'circle-o', 'url' => '#',],
+                                        [
+                                            'label' => 'Level Two',
+                                            'icon' => 'circle-o',
+                                            'url' => '#',
+                                            'items' => [
+                                                ['label' => 'Level Three', 'icon' => 'circle-o', 'url' => '#',],
+                                                ['label' => 'Level Three', 'icon' => 'circle-o', 'url' => '#',],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            ) ?>
         </section>
         <!-- /.sidebar -->
     </aside>

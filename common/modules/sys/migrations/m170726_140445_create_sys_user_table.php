@@ -10,14 +10,14 @@ namespace sys\migrations;
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `user`.
+ * Handles the creation of table `sys_user`.
  */
-class m170726_140445_create_user_table extends Migration
+class m170726_140445_create_sys_user_table extends Migration
 {
     /**
      * @var string Name of create a table
      */
-    private $table = '{{%user}}';
+    private $table = '{{%sys_user}}';
 
     public function up()
     {
@@ -40,9 +40,9 @@ class m170726_140445_create_user_table extends Migration
             'updated_at'           => $this->integer()->unsigned()->notNull(),
         ], $tableOptions);
 
-        $this->createIndex('{{%idx-user-username}}', $this->table, 'username');
-        $this->createIndex('{{%idx-user-email}}',    $this->table, 'email');
-        $this->createIndex('{{%idx-user-status}}',   $this->table, 'status');
+        $this->createIndex('{{%idx-sys_user-username}}', $this->table, 'username');
+        $this->createIndex('{{%idx-sys_user-email}}',    $this->table, 'email');
+        $this->createIndex('{{%idx-sys_user-status}}',   $this->table, 'status');
     }
 
     public function down()

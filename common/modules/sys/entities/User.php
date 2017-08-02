@@ -15,7 +15,7 @@ use yii\behaviors\TimestampBehavior;
 use sys\interfaces\HybridManagerInterface;
 
 /**
- * User model.
+ * This is the model class for table "{{%sys_user}}".
  * @property integer $id
  * @property string  $username
  * @property string  $auth_key
@@ -39,7 +39,7 @@ class User extends ActiveRecord implements HybridManagerInterface
      */
     public static function tableName()
     {
-        return '{{%user}}';
+        return '{{%sys_user}}';
     }
 
     /**

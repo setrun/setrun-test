@@ -8,6 +8,9 @@
 namespace sys\components;
 
 use sys\components\configurator\Storage;
+use sys\entities\Domain;
+use sys\entities\Language;
+use sys\entities\Setting;
 use Yii;
 use yii\db\Query;
 use yii\db\Connection;
@@ -182,20 +185,20 @@ class Configurator
     {
         $this->storage()->existsOrSet('domain', function ($cache){
             return (new Query())->select('*')
-                                ->from('{{%domain}}')
+                                ->from(Domain::tableName())
                                 ->indexBy('domain')
                                 ->all($this->getDb());
         });
         $this->storage()->existsOrSet('language', function ($cache){
             return (new Query())->select('*')
-                                ->from('{{%language}}')
+                                ->from(Language::tableName())
                                 ->indexBy('slug')
                                 ->all($this->getDb());
         });
         $this->storage()->existsOrSet('component', function ($cache){
             $config = [];
             $query  = (new Query())->select('*')
-                                   ->from('{{%component_setting}}')
+                                   ->from(Setting::tableName())
                                    ->where(['user_id' => null])
                                    ->all($this->getDb());
             foreach ($query as $row) {
@@ -241,7 +244,7 @@ class Configurator
     {
         $config = [];
         $query  = (new Query())->select('*')
-                               ->from('{{%component_setting}}')
+                               ->from(Setting::tableName())
                                ->where(['user_id' => $uid])
                                ->all($this->getDb());
         foreach ($query as $row) {
@@ -259,7 +262,7 @@ class Configurator
     {
         $config = [];
         $query  = (new Query())->select('*')
-                               ->from('{{%component_setting}}')
+                               ->from(Setting::tableName())
                                ->where(['did' => $did])
                                ->all($this->getDb());
         foreach ($query as $row) {

@@ -10,14 +10,14 @@ namespace sys\migrations;
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `component_setting`.
+ * Handles the creation of table `sys_setting`.
  */
-class m170731_105256_create_component_setting_table extends Migration
+class m170731_105256_create_sys_setting_table extends Migration
 {
     /**
      * @var string Name of create a table
      */
-    private $table = '{{%component_setting}}';
+    private $table = '{{%sys_setting}}';
 
     /**
      * @inheritdoc
@@ -38,10 +38,10 @@ class m170731_105256_create_component_setting_table extends Migration
             'updated_at' => $this->integer()->unsigned()->notNull()
         ], $tableOptions);
 
-        $this->createIndex(  '{{%idx-component_setting-name}}',  $this->table, 'name');
+        $this->createIndex(  '{{%idx-sys_setting-name}}',  $this->table, 'name');
 
-        $this->addForeignKey('{{%fk-component_setting-user}}',   $this->table, 'user_id', '{{%user}}',   'id', 'CASCADE');
-        $this->addForeignKey('{{%fk-component_setting-domain}}', $this->table, 'did',     '{{%domain}}', 'id', 'CASCADE');
+        $this->addForeignKey('{{%fk-sys_setting-user}}',   $this->table, 'user_id', '{{%sys_user}}',   'id', 'CASCADE');
+        $this->addForeignKey('{{%fk-sys_setting-domain}}', $this->table, 'did',     '{{%sys_domain}}', 'id', 'CASCADE');
     }
 
     /**
