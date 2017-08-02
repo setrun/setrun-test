@@ -22,6 +22,7 @@ class Configurator
 {
     public const WEB        = 'application.web';
     public const CONSOLE    = 'application.console';
+    public const COMPONENT  = 'component';
 
     /**
      * List of configurations application.
@@ -80,10 +81,10 @@ class Configurator
      */
     public function component($key = null, $default = null)
     {
-        if ($key == null) {
-            return $this->storage()->get('components', []);
+        if ($key === null) {
+            return $this->storage()->get(self::COMPONENT, []);
         }
-        return $this->storage()->get('components.' . $key, []);
+        return $this->storage()->get(self::COMPONENT .  '.' . $key, $default);
     }
 
     /**
@@ -106,7 +107,7 @@ class Configurator
      */
     public function storage() : Storage
     {
-        if ($this->storage == null) {
+        if ($this->storage === null) {
             $this->storage = new Storage($this->getDb(), $this->getCache());
         }
         return $this->storage;
@@ -134,11 +135,11 @@ class Configurator
      */
     public function updateComponentsByUser($uid) : void
     {
-        $key    = 'components.user.' . $uid;
+        $key    = self::COMPONENT . '.user.' . $uid;
         $config = $this->getCache()->getOrSet($key, function() use ($uid) {
             return $this->loadComponentsConfigByUser($uid);
         });
-        $this->storage()->set('components', $config);
+        $this->storage()->set(self::COMPONENT, $config);
         unset($config);
     }
 
@@ -149,11 +150,11 @@ class Configurator
      */
     public function updateComponentsByDomain($did) : void
     {
-        $key    = 'components.domain.' . $did;
+        $key    = self::COMPONENT . '.domain.' . $did;
         $config = $this->getCache()->getOrSet($key, function() use ($did) {
             return $this->loadComponentsConfigByDomain($did);
         });
-        $this->storage()->set('components', $config);
+        $this->storage()->set(self::COMPONENT, $config);
         unset($config);
     }
 
@@ -179,19 +180,19 @@ class Configurator
      */
     protected function loadStorageConfig() : void
     {
-        $this->storage()->getOrSet('domain', function ($cache){
+        $this->storage()->existsOrSet('domain', function ($cache){
             return (new Query())->select('*')
                                 ->from('{{%domain}}')
                                 ->indexBy('domain')
                                 ->all($this->getDb());
         });
-        $this->storage()->getOrSet('language', function ($cache){
+        $this->storage()->existsOrSet('language', function ($cache){
             return (new Query())->select('*')
                                 ->from('{{%language}}')
                                 ->indexBy('slug')
                                 ->all($this->getDb());
         });
-        $this->storage()->getOrSet('components', function ($cache){
+        $this->storage()->existsOrSet('component', function ($cache){
             $config = [];
             $query  = (new Query())->select('*')
                                    ->from('{{%component_setting}}')
@@ -212,7 +213,7 @@ class Configurator
     {
         $config = [];
         $appPath            = defined('APP_DIR') ? APP_DIR : ROOT_DIR . '/applications/master';
-        $installedPath      = $appPath . '/config/modules' . ($this->env == self::WEB ? '' : '/console');
+        $installedPath      = $appPath . '/config/modules' . ($this->env === self::WEB ? '' : '/console');
         $installedLocalPath = $installedPath . '/local';
         $modulesPath        = ROOT_DIR . '/common/modules';
         /** @var $item \SplFileInfo  */

@@ -5,13 +5,15 @@
  * @link   https://github.com/dizirator
  */
 
+use yii\i18n\PhpMessageSource;
+
 return [
     'bootstrap' => ['log', 'queue'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset'
     ],
-    'vendorPath' => dirname(dirname(__DIR__) ). '/vendor',
+    'vendorPath' => ROOT_DIR . '/vendor',
     'components' => [
         'authManager' => [
             'class' => 'sys\components\rbac\HybridManager'
@@ -39,7 +41,6 @@ return [
                 ],
             ],
         ],
-
         'i18n' => [
             'translations' => [
                 'sys*' => [
@@ -47,7 +48,7 @@ return [
                     'basePath' => '@sys/messages',
                     'fileMap' => [
                         'sys'      => 'sys.php',
-                        'sys/user' => 'user.php',
+                        'sys/user' => 'user.php'
                     ]
                 ]
             ]

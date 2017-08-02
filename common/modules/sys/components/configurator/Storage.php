@@ -7,8 +7,8 @@
 
 namespace sys\components\configurator;
 
-use yii\caching\FileCache;
 use yii\db\Connection;
+use yii\caching\FileCache;
 use sys\helpers\ArrayHelper;
 
 /**
@@ -41,7 +41,11 @@ class Storage
     {
         $this->db      = $db;
         $this->cache   = $cache;
-        $this->storage = $this->cache->get(self::KEY, []);
+        if(!($this->storage = $this->cache->get(self::KEY)))
+        {
+            $this->storage = [];
+        }
+
     }
 
     /**
@@ -52,7 +56,7 @@ class Storage
      */
     public function get($key = null, $default = null)
     {
-        if ($key == null) {
+        if ($key === null) {
             return $this->storage;
         }
         return ArrayHelper::getValue($this->storage, $key, $default);
@@ -62,8 +66,9 @@ class Storage
      * Set array value.
      * @param $key
      * @param null $value
+     * @return void
      */
-    public function set($key, $value = null)
+    public function set($key, $value = null) : void
     {
         if (is_array($key)) {
             $this->storage  = array_replace_recursive($this->storage, $key);
@@ -76,8 +81,9 @@ class Storage
     /**
      * Delete array value.
      * @param $key
+     * @return void
      */
-    public  function delete($key)
+    public  function delete($key) : void
     {
         ArrayHelper::delete($this->storage, $key);
         $this->cache->set(self::KEY, $this->storage);
@@ -91,11 +97,10 @@ class Storage
      */
     public function getOrSet($key, \Closure $fn)
     {
-        $value = $this->get($key);
-        if ($value) {
+        if (($value = $this->get($key)) !== null) {
             return $value;
         }
-        if (is_callable($fn)) {
+        if ($fn instanceof \Closure) {
             $value = $fn($this);
             $this->set($key, $value);
         }
@@ -111,5 +116,23 @@ class Storage
         $value = $this->get($key);
         $this->delete($key);
         return $value;
+    }
+
+    /**
+     * Key exists or ser array value.
+     * @param $key
+     * @param \Closure $fn
+     * @return bool
+     */
+    public function existsOrSet($key, \Closure $fn) : bool
+    {
+        if (!ArrayHelper::key_exists($this->storage, $key)) {
+            if ($fn instanceof \Closure) {
+                $value = $fn($this);
+                $this->set($key, $value);
+            }
+            return false;
+        }
+        return true;
     }
 }

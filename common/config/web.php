@@ -25,6 +25,7 @@ return [
             ]
         ],
         'urlManager' => [
+            'class' => 'sys\components\web\UrlManager',
             'enablePrettyUrl' => true,
             'showScriptName'  => false,
             'suffix'          => null,
@@ -34,7 +35,7 @@ return [
             ],
             'rules' => [
                 "<_a:(login|logout)>" => "sys/user/auth/<_a>",
-                "{$slug}" => "sys/backend/backend/index",
+                "{$slug}" => "sys/backend/index",
                 "{$slug}/<_m:\w+>/<_c:\w+(-\w+)*>" => "<_m>/backend/<_c>/index",
                 "{$slug}/<_m:\w+>/<_c:[-\w]+>/<_a:[-\w]+>/<id:\d+>" => "<_m>/backend/<_c>/<_a>",
                 "{$slug}/<_m:\w+>/<_c:[-\w]+>/<_a:[-\w]+>" => "<_m>/backend/<_c>/<_a>"

@@ -5,6 +5,11 @@
  * @link   https://github.com/dizirator
  */
 
-return [
+namespace sys\components\web;
 
-];
+use Yii;
+
+class UrlManager extends \codemix\localeurls\UrlManager
+{
+
+}

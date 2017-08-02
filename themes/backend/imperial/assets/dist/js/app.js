@@ -1,0 +1,3 @@
+;(function($, Sys){
+
+})(jQuery, Sys);

@@ -8,6 +8,7 @@
 namespace sys\components\controllers;
 
 use Yii;
+use sys\components\rbac\HybridManager;
 
 /**
  * Front default controller.
@@ -20,15 +21,14 @@ class FrontController extends BaseController
     public function beforeAction($action)
     {
         $config = Yii::$app->get('config');
+        $access = Yii::$app->user->can(HybridManager::P_BACKEND_ACCESS);
         if ($config->component('sys.denyAccess', false)) {
-            if (!Yii::$app->user->can('notDenyAccess') && !in_array($action->id, $this->allowActions())) {
+            if (!$access && !in_array($action->id, $this->allowActions())) {
                 exit($this->renderPartial('@theme/deny-access'));
             }
         }
-        if (!Yii::$app->user->isGuest && $config->component('sys.assets.isPermissionForcedCopy', false)) {
-            if (Yii::$app->user->can('assetsForcedCopy')) {
-                Yii::$app->assetManager->forceCopy = true;
-            }
+        if ($access && $config->component('sys.assets.isPermissionForcedCopy', false)) {
+            Yii::$app->assetManager->forceCopy = true;
         }
         return parent::beforeAction($action);
     }

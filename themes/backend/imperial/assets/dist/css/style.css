@@ -1,0 +1,23 @@
+.sidebar-footer {
+    bottom: 0px;
+    clear: both;
+    display: block;
+    padding: 5px 0 0 0;
+    position: fixed;
+    width: 230px;
+    background: #374850;
+}
+
+.sidebar-footer a {
+    padding: 7px 0 3px;
+    text-align: center;
+    width: 25%;
+    font-size: 15px;
+    display: block;
+    float: left;
+    background: #222d32;
+}
+
+.sidebar-footer a:hover {
+    background: #425567;
+}

@@ -20,6 +20,12 @@ use sys\interfaces\HybridManagerInterface;
  */
 class HybridManager extends PhpManager
 {
+    public const P_BACKEND_ACCESS = 'sys/backend/access';
+    public const R_SU             = 'su';
+    public const R_ADMINISTRATOR  = 'administrator';
+    public const R_EDITOR         = 'editor';
+    public const R_USER           = 'user';
+
     /**
      * @var HybridManagerInterface
      */

@@ -15,7 +15,7 @@ class Theme extends \yii\base\Theme
     public function applyTo($path)
     {
         $base = Yii::$app->getBasePath();
-        $file = str_replace(['views/', $base], ['', $this->getBasePath() . '/views'], $path);
+        $file = str_replace(['views/', $base], ['', $this->getBasePath()], $path);
         return !is_file($file) ? $path : $file;
     }
 }

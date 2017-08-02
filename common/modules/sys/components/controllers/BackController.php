@@ -7,9 +7,11 @@
 
 namespace sys\components\controllers;
 
+
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use sys\components\rbac\HybridManager;
 
 /**
  * Class BackController.
@@ -32,7 +34,7 @@ class BackController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['backend']
+                        'roles' => [HybridManager::P_BACKEND_ACCESS]
                     ]
                 ]
             ],
@@ -51,11 +53,10 @@ class BackController extends BaseController
     public function init()
     {
         $this->view->theme->setBasePath(
-            '@themes/backend/' . Yii::$app->get('config')->component('sys.backend.theme')
+            Yii::getAlias('@themes/backend/' . Yii::$app->get('config')->component('sys.backend.theme'))
         );
         Yii::$app->assetManager->forceCopy =
                                  Yii::$app->get('config')->component('sys.backend.assets.forcedCopy', false);
         parent::init();
-
     }
 }

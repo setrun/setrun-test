@@ -6,11 +6,10 @@
  */
 
 // Aliases
-
-Yii::setAlias('@common', dirname(__DIR__) . '/common');
-Yii::setAlias('@themes', dirname(__DIR__) . '/themes');
-Yii::setAlias('@root',   dirname(__DIR__) . '');
-Yii::setAlias('@sys',    dirname(__DIR__) . '/common/modules/sys');
+Yii::setAlias('@common', ROOT_DIR . '/common');
+Yii::setAlias('@themes', ROOT_DIR . '/themes');
+Yii::setAlias('@root',   ROOT_DIR . '');
+Yii::setAlias('@sys',    ROOT_DIR . '/common/modules/sys');
 
 // DI
 \Yii::$container->setSingleton(\sys\components\Configurator::class);

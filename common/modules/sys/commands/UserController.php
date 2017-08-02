@@ -147,30 +147,32 @@ class UserController extends Controller
         $auth = Yii::$app->getAuthManager();
         $auth->removeAll();
 
-        $backend = $auth->createPermission('backend');
-        $backend->description = 'Backend panel Permission';
-        $auth->add($backend);
+        $su = $auth->createRole('su');
+        $su->description = 'Super User';
+        $auth->add($su);
 
-        $assetsForcedCopy = $auth->createPermission('assetsForcedCopy');
-        $assetsForcedCopy->description = 'Assets Forced Copy Permission';
-        $auth->add($assetsForcedCopy);
-
-        $notDenyAccess = $auth->createPermission('notDenyAccess');
-        $notDenyAccess->description = 'notDenyAccess Permission';
-        $auth->add($notDenyAccess);
-
-        $user = $auth->createRole('user');
-        $user->description = 'User Role';
-        $auth->add($user);
-
-        $admin = $auth->createRole('administrator');
-        $admin->description = 'Administrator Role';
+        $admin = $auth->createRole('admin');
+        $admin->description = 'Administrator';
         $auth->add($admin);
 
-        $auth->addChild($admin, $user);
-        $auth->addChild($admin, $backend);
-        $auth->addChild($admin, $notDenyAccess);
-        $auth->addChild($admin, $assetsForcedCopy);
+        $editor = $auth->createRole('editor');
+        $editor->description = 'Editor';
+        $auth->add($editor);
+
+        $user = $auth->createRole('user');
+        $user->description = 'User';
+        $auth->add($user);
+
+
+        $backendAccess = $auth->createPermission('sys/backend/access');
+        $backendAccess->description = 'Backend access';
+        $auth->add($backendAccess);
+
+        $auth->addChild($su, $admin);
+        $auth->addChild($su, $editor);
+        $auth->addChild($su, $user);
+        $auth->addChild($admin,  $backendAccess);
+        $auth->addChild($editor, $backendAccess);
 
         $this->log(true);
     }
