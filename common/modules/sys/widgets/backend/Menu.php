@@ -71,6 +71,7 @@ class Menu extends \yii\widgets\Menu
         } else {
             $this->noDefaultRoute = false;
         }
+
         $items = $this->normalizeItems($this->items, $hasActiveChild);
         if (!empty($items)) {
             $options = $this->options;

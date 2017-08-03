@@ -11,11 +11,11 @@ return  [
     'components' => [
         'view' => [
             'theme' => [
-                'basePath' => '@themes/' . $configurator->component('sys.theme'),
+                'basePath' => '@themes/' . $configurator->component('sys')->get('theme'),
             ]
         ],
         'assetManager' => [
-            'forceCopy' => $configurator->component('sys.assets.forcedCopy', false)
+            'forceCopy' => $configurator->component('sys')->get('assets.forcedCopy', false)
         ]
     ]
 ];

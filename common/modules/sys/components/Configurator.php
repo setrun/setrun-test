@@ -79,15 +79,15 @@ class Configurator
     /**
      * Get a configuration of key.
      * @param null $key
-     * @param null $default
-     * @return array|mixed
+     * @return Storage
      */
-    public function component($key = null, $default = null)
+    public function component($key = null) : Storage
     {
+        $storage = $this->storage()->addKey(self::COMPONENT);
         if ($key === null) {
-            return $this->storage()->get(self::COMPONENT, []);
+            return $storage;
         }
-        return $this->storage()->get(self::COMPONENT .  '.' . $key, $default);
+        return $storage->addKey($key);
     }
 
     /**
@@ -129,6 +129,7 @@ class Configurator
             $installedModuleConfig = $this->loadInstalledModuleConfig();
             return ArrayHelper::merge($baseConfig, $installedModuleConfig);
        });
+
     }
 
     /**

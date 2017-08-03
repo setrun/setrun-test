@@ -31,6 +31,11 @@ class Storage
     /**
      * @var array
      */
+    protected $keys = [];
+
+    /**
+     * @var array
+     */
     protected $storage = [];
 
     /**
@@ -54,9 +59,10 @@ class Storage
      * @param null $default
      * @return array|mixed
      */
-    public function get($key = null, $default = null)
+    public function get($key = '', $default = null)
     {
-        if ($key === null) {
+        $key = $this->getCompositeKey($key);
+        if (empty($key)) {
             return $this->storage;
         }
         return ArrayHelper::getValue($this->storage, $key, $default);
@@ -73,6 +79,7 @@ class Storage
         if (is_array($key)) {
             $this->storage  = array_replace_recursive($this->storage, $key);
         } elseif ($value !== null) {
+            $key = $this->getCompositeKey($key);
             ArrayHelper::set($this->storage, $key, $value);
         }
         $this->cache->set(self::KEY, $this->storage);
@@ -85,6 +92,7 @@ class Storage
      */
     public  function delete($key) : void
     {
+        $key = $this->getCompositeKey($key);
         ArrayHelper::delete($this->storage, $key);
         $this->cache->set(self::KEY, $this->storage);
     }
@@ -97,6 +105,7 @@ class Storage
      */
     public function getOrSet($key, \Closure $fn)
     {
+        $key = $this->getCompositeKey($key);
         if (($value = $this->get($key)) !== null) {
             return $value;
         }
@@ -113,6 +122,7 @@ class Storage
      */
     public function getAndDelete($key)
     {
+        $key   = $this->getCompositeKey($key);
         $value = $this->get($key);
         $this->delete($key);
         return $value;
@@ -126,6 +136,7 @@ class Storage
      */
     public function existsOrSet($key, \Closure $fn) : bool
     {
+        $key = $this->getCompositeKey($key);
         if (!ArrayHelper::key_exists($this->storage, $key)) {
             if ($fn instanceof \Closure) {
                 $value = $fn($this);
@@ -134,5 +145,28 @@ class Storage
             return false;
         }
         return true;
+    }
+
+    /**
+     * @param string $key
+     * @return Storage
+     */
+    public function addKey(string $key) : self
+    {
+        $this->keys[] = $key;
+        return $this;
+    }
+
+    /**
+     * Get a composite key.
+     * @param  string $key
+     * @return string
+     */
+    protected function getCompositeKey(string $key) : string
+    {
+        $this->keys[] = $key;
+        $output = implode('.', $this->keys);
+        $this->keys = [];
+        return trim($output, '.');
     }
 }

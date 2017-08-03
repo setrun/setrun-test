@@ -8,7 +8,6 @@
 return [
     'Sys'  => 'Система',
     'Home' => 'Главная',
-    'The requested page does not exist' => 'Запрашиваемая страница не существует',
     'Error' => 'Ошибка',
     'Model not found'  => 'Модель не найдена',
     'Model not exists' => 'Модель не существует',
@@ -17,5 +16,6 @@ return [
     'The [{property}] property must be set' => 'Свойство [{property}] не установлено',
     'Data saved successfully' => 'Данные успешно обновлены',
     'Not specified' => 'Не задано',
-    'findIdentityByAccessToken is not implemented' => 'Метод авторизации по токену доступа отсутсвует'
+    'findIdentityByAccessToken is not implemented' => 'Метод авторизации по токену доступа отсутсвует',
+    'The requested page does not exist' => 'Запрашиваемая страница не существует',
 ];

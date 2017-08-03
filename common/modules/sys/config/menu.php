@@ -14,19 +14,19 @@ return [
         'items' => [
             [
                 'label' => 'Домены',
-                'url'   => Url::to(['/sys/backend/domain/index'])
+                'url'   =>['/sys/backend/domain/index']
             ],
             [
                 'label' => 'Языки',
-                'url'   => Url::to(['/sys/backend/language/index'])
+                'url'   => ['/sys/backend/language/index']
             ],
             [
                 'label' => 'Настройки',
-                'url'   => Url::to(['/sys/backend/setting/index'])
+                'url'   => ['/sys/backend/setting/index']
             ],
             [
                 'label' => 'Модули',
-                'url'   => Url::to(['/sys/backend/module/index'])
+                'url'   => ['/sys/backend/module/index']
             ],
 
         ]
@@ -37,15 +37,15 @@ return [
         'items' => [
             [
                 'label' => 'Пользователи',
-                'url'   => Url::to(['/sys/backend/user/index'])
+                'url'   => ['/sys/backend/user/index']
             ],
             [
                 'label' => 'Роли',
-                'url'   => Url::to(['/sys/backend/role/index'])
+                'url'   => ['/sys/backend/rbac-role/index']
             ],
             [
                 'label' => 'Привилегии',
-                'url'   => Url::to(['/sys/backend/permission/index'])
+                'url'   => ['/sys/backend/rbac-permission/index']
             ],
 
         ]
@@ -56,15 +56,15 @@ return [
         'items' => [
             [
                 'label' => 'Категории',
-                'url'   => Url::to(['/sys/backend/content/index'])
+                'url'   => ['/sys/backend/content/index']
             ],
             [
                 'label' => 'Страницы',
-                'url'   => Url::to(['/sys/backend/content/index'])
+                'url'   => ['/sys/backend/content/index']
             ],
             [
                 'label' => 'Дополнительные поля',
-                'url'   => Url::to(['/sys/backend/content/index'])
+                'url'   => ['/sys/backend/content/index']
             ],
 
         ]

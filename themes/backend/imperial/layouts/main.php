@@ -7,9 +7,9 @@
 
 use yii\helpers\Url;
 use yii\helpers\Html;
+use yii\widgets\Breadcrumbs;
 
 themes\backend\imperial\assets\ThemeAsset::register($this);
-
 ?>
 <?php $this->beginPage() ?>
 
@@ -32,7 +32,7 @@ themes\backend\imperial\assets\ThemeAsset::register($this);
 <div class="wrapper">
     <header class="main-header">
         <!-- Logo -->
-        <a href="../../index2.html" class="logo">
+        <a href="<?= Url::to(['/sys/backend/index']) ?>" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini"><b>SR</b></span>
             <!-- logo for regular state and mobile devices -->
@@ -73,43 +73,7 @@ themes\backend\imperial\assets\ThemeAsset::register($this);
                     <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
                 </div>
             </div>
-            <!-- sidebar menu: : style can be found in sidebar.less -->
-            <?= \sys\widgets\backend\Menu::widget(
-                [
-                    'items' => [
-                        ['label' => 'Menu Yii2', 'options' => ['class' => 'header']],
-                        ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii']],
-                        ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug']],
-                        ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
-                        [
-                            'label' => 'Same tools',
-                            'icon' => 'share',
-                            'url' => '#',
-                            'items' => [
-                                ['label' => 'Gii', 'icon' => 'file-code-o', 'url' => ['/gii'],],
-                                ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug'],],
-                                [
-                                    'label' => 'Level One',
-                                    'icon' => 'circle-o',
-                                    'url' => '#',
-                                    'items' => [
-                                        ['label' => 'Level Two', 'icon' => 'circle-o', 'url' => '#',],
-                                        [
-                                            'label' => 'Level Two',
-                                            'icon' => 'circle-o',
-                                            'url' => '#',
-                                            'items' => [
-                                                ['label' => 'Level Three', 'icon' => 'circle-o', 'url' => '#',],
-                                                ['label' => 'Level Three', 'icon' => 'circle-o', 'url' => '#',],
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ]
-            ) ?>
+            <?= \sys\widgets\backend\Menu::widget() ?>
         </section>
         <!-- /.sidebar -->
     </aside>
@@ -121,14 +85,17 @@ themes\backend\imperial\assets\ThemeAsset::register($this);
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                Fixed Layout
-                <small>Blank example to the fixed layout</small>
+                <?= $this->title ?>
             </h1>
-            <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                <li><a href="#">Layout</a></li>
-                <li class="active">Fixed</li>
-            </ol>
+            <?= Breadcrumbs::widget([
+                'homeLink' => [
+                    'tag'     => 'ol',
+                    'options' => ['class' => 'breadcrumb'],
+                    'label'   => Yii::t('sys', 'Home'),
+                    'url'     => ['/sys/backend/index']
+                ],
+                'links' => $this->params['breadcrumbs'] ?? []
+            ]) ?>
         </section>
 
         <!-- Main content -->
